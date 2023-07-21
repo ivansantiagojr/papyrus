@@ -11,6 +11,9 @@ packages = [{include = "src"}]
 python = "^3.11"
 fastapi = "^0.100.0"
 uvicorn = "^0.23.1"
+sqlalchemy = "^2.0.19"
+pydantic-settings = "^2.0.2"
+alembic = "^1.11.1"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -20,6 +23,7 @@ taskipy = "^1.11.0"
 blue = "^0.9.1"
 ruff = "^0.0.278"
 httpx = "^0.24.1"
+isort = "^5.12.0"
 
 
 [tool.ruff]
@@ -39,9 +43,9 @@ extend-exclude = '(migrations/)'
 [tool.taskipy.tasks]
 lint = 'ruff . && blue --check . --diff'
 format = 'blue .  && isort .'
-run = 'uvicorn fast_zero.app:app --reload'
+run = 'uvicorn src.main:app --reload'
 pre_test = 'task lint'
-test = 'pytest -s -x --cov=fast_zero -vv'
+test = 'pytest -s -x --cov=src -vv'
 post_test = 'coverage html'
 
 [build-system]
