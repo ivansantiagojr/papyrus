@@ -1,5 +1,6 @@
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from src.articles.models import Article
 from src.database import Base
 from src.users.schemas import UserRole
 
@@ -11,3 +12,7 @@ class User(Base):
     username: Mapped[str]
     password: Mapped[str]
     role: Mapped[UserRole]
+
+    articles: Mapped[list['Article']] = relationship(
+        back_populates='user', cascade='all, delete-orphan'
+    )

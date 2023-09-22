@@ -11,7 +11,7 @@ from src.database import get_session
 from src.users.models import User
 from src.users.routes import CurrentUser
 
-router = APIRouter(tags=['token'])
+router = APIRouter()
 OAuth2Form = Annotated[OAuth2PasswordRequestForm, Depends()]
 Session = Annotated[Session, Depends(get_session)]
 

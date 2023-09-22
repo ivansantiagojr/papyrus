@@ -9,7 +9,7 @@ def test_create_user_admin(client, admin_user, admin_token):
     )
 
     assert response.status_code == 201
-    assert response.json() == {'username': 'alice', 'role': 'WRITER', 'id': 5}
+    assert response.json() == {'username': 'alice', 'role': 'WRITER', 'id': 1}
 
 
 def test_create_user_username_already_exists_admin(

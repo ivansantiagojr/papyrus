@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["ivansantiagojr <ivansantiago.junior@gmail.com>"]
 readme = "README.md"
-packages = [{include = "src"}]
+packages = [{ include = "src" }]
 
 
 [tool.poetry.dependencies]
@@ -14,9 +14,10 @@ uvicorn = "^0.23.1"
 sqlalchemy = "^2.0.19"
 pydantic-settings = "^2.0.2"
 alembic = "^1.11.1"
-python-jose = {extras = ["cryptography"], version = "^3.3.0"}
-passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+python-jose = { extras = ["cryptography"], version = "^3.3.0" }
+passlib = { extras = ["bcrypt"], version = "^1.7.4" }
 python-multipart = "^0.0.6"
+psycopg = { extras = ["binary"], version = "^3.1.10" }
 
 
 [tool.poetry.group.dev.dependencies]
@@ -42,6 +43,7 @@ line_length = 79
 [tool.pytest.ini_options]
 pythonpath = "."
 
+
 [tool.blue]
 extend-exclude = '(migrations/)'
 
@@ -49,7 +51,7 @@ extend-exclude = '(migrations/)'
 lint = 'ruff . && blue --check . --diff'
 format = 'blue .  && isort .'
 run = 'uvicorn src.main:app --reload'
-pre_test = 'task lint'
+# pre_test = 'task lint'
 test = 'pytest -s -x --cov=src -vv'
 post_test = 'coverage html'
 

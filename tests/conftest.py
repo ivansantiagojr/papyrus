@@ -1,28 +1,58 @@
+from datetime import datetime
+
 import factory
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import StaticPool
 
+from src.articles.models import Article
 from src.auth.security import get_password_hash
 from src.database import Base, get_session
 from src.main import app
 from src.users.models import User
 
 
-@pytest.fixture
+@pytest.fixture(scope='function')
 def session():
     engine = create_engine(
-        'sqlite:///:memory:',
-        connect_args={'check_same_thread': False},
-        poolclass=StaticPool,
+        'postgresql+psycopg://postgres:testpassword@localhost:5435/postgres',
+        pool_size=20,
+        max_overflow=0,
     )
 
     Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     Base.metadata.create_all(engine)
-    yield Session()
+
+    session = Session()
+    session.begin()
+    yield session
+
+    session.rollback()
+    session.close_all()
+
     Base.metadata.drop_all(engine)
+
+
+class UserFactory(factory.Factory):
+    class Meta:
+        model = User
+
+    id = factory.sequence(lambda n: n)
+    username = factory.sequence(lambda n: f'test{n}')
+    password = factory.LazyAttribute(lambda obj: f'{obj.username}pass')
+    role = 'WRITER'
+
+
+class ArticleFactory(factory.Factory):
+    class Meta:
+        model = Article
+
+    title = factory.Faker('text')
+    content = factory.Faker('text')
+    tags = factory.Faker('text')
+    date = datetime.now()
+    user_id = factory.SubFactory(UserFactory)
 
 
 @pytest.fixture
@@ -35,16 +65,6 @@ def client(session):
         yield client
 
     app.dependency_overrides.clear()
-
-
-class UserFactory(factory.Factory):
-    class Meta:
-        model = User
-
-    id = factory.sequence(lambda n: n)
-    username = factory.sequence(lambda n: f'test{n}')
-    password = factory.LazyAttribute(lambda obj: f'{obj.username}pass')
-    role = 'WRITER'
 
 
 @pytest.fixture
